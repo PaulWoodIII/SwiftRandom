@@ -124,4 +124,44 @@ class SwiftRandomTests: XCTestCase {
 
         waitForExpectations(timeout: 3.5, handler: nil)
     }
+    
+    /// Tests using async way to create a gravatar.
+    func testRandomCreateAvatar() {
+        let async = expectation(description: "Randoms.randomCreateAvatar")
+        
+        Randoms.createAvatar { (image, error) in
+            XCTAssertNotNil(image)
+            XCTAssertNil(error)
+            
+            async.fulfill()
+        }
+        
+        waitForExpectations(timeout: 15, handler: nil)
+    }
+    
+    /// Tests using async way to create a gravatar based at Style and Size.
+    func testRandomCreateAvatarMaleStyle() {
+        let maleTest = expectation(description: "Randoms.randomMale")
+        
+        Randoms.createAvatar(.Male) { (image, error) in
+            XCTAssertNotNil(image)
+            XCTAssertNil(error)
+            
+            maleTest.fulfill()
+        }
+        waitForExpectations(timeout: 15.5, handler: nil)
+    }
+    
+    func testRandomCreateAvatarFemaleStyle() {
+        let femaleTest = expectation(description: "Randoms.randomFemale")
+        
+        Randoms.createAvatar(.Female) { (image, error) in
+            XCTAssertNotNil(image)
+            XCTAssertNil(error)
+            
+            femaleTest.fulfill()
+        }
+
+        waitForExpectations(timeout: 15.5, handler: nil)
+    }
 }

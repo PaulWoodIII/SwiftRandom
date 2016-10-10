@@ -299,4 +299,43 @@ public struct Randoms {
         let options = Randoms.GravatarStyle.allValues
         Randoms.createGravatar(options.randomItem()!, size: size, completion: completion)
     }
+    
+    public enum AvatarStyle: String {
+        case Random
+        case Male
+        case Female
+        static let allValues = [Random, Male, Female]
+    }
+    
+    public static func createAvatar(_ style: Randoms.AvatarStyle = .Random, completion: ((_ image: UIImage?, _ error: Error?) -> Void)?) {
+        
+        var url : String;
+        switch style{
+        case .Female:
+            url = "https://randomuser.me/api/portraits/women/\(Int.random(0, 99)).jpg"
+        case .Male:
+            url = "https://randomuser.me/api/portraits/men/\(Int.random(0, 99)).jpg"
+        case .Random:
+            let gender = Bool.random() ? "women" : "men"
+            url = "https://randomuser.me/api/portraits/\(gender)/\(Int.random(0, 99)).jpg"
+        }
+
+        
+        let request = URLRequest(url: URL(string: url)! as URL, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 15.0)
+        let session = URLSession.shared
+        
+        session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
+            DispatchQueue.main.async {
+                if error == nil {
+                    completion?(UIImage(data: data!), nil)
+                } else {
+                    completion?(nil, error)
+                }
+            }
+        }).resume()
+    }
+    
+    public static func randomAvatar(completion: ((_ image: UIImage?, _ error: Error?) -> Void)?) {
+        Randoms.createAvatar(AvatarStyle.Random, completion: completion)
+    }
 }
